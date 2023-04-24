@@ -33,23 +33,28 @@ class MaxIntSet
 end
 
 class IntSet
+  attr_reader :store
   def initialize(num_buckets = 20)
     @store = Array.new(num_buckets) { Array.new }
   end
 
+  def include?(num)
+    self[num].include?(num)  
+  end
+
   def insert(num)
+    self[num] << num
   end
 
   def remove(num)
-  end
-
-  def include?(num)
+    self[num].delete(num)
   end
 
   private
 
   def [](num)
-    # optional but useful; return the bucket corresponding to `num`
+    bucket = num % num_buckets
+    @store[bucket]
   end
 
   def num_buckets
@@ -58,20 +63,30 @@ class IntSet
 end
 
 class ResizingIntSet
-  attr_reader :count
+  attr_reader :count, :store
 
   def initialize(num_buckets = 20)
     @store = Array.new(num_buckets) { Array.new }
     @count = 0
   end
 
+  def include?(num)
+    self[num].include?(num)  
+  end
+
   def insert(num)
+    if !include?(num)
+      self[num] << num
+      @count += 1
+    end
+    resize! if @count == num_buckets
   end
 
   def remove(num)
-  end
-
-  def include?(num)
+    if include?(num)
+      self[num].delete(num)
+      @count -= 1
+    end
   end
 
   private
@@ -81,9 +96,15 @@ class ResizingIntSet
   end
 
   def resize!
+    nums = @store.flatten
+    @store = Array.new(num_buckets * 2)  { Array.new }
+    nums.each do |num|
+      self[num] << num
+    end
   end
 
   def [](num)
-    # optional but useful; return the bucket corresponding to `num`
+    bucket = num % num_buckets
+    @store[bucket]
   end
 end
