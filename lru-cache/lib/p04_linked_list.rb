@@ -32,7 +32,7 @@ class LinkedList
   end
 
   def empty?
-    # @head.next == @tail
+    @head.next == @tail
   end
   
   def append(key, val)
@@ -43,19 +43,38 @@ class LinkedList
     new_node.prev.next = new_node
   end
   
-  def each
-
+  def each(&prc)
+    node = @head.next
+    until node == @tail
+      prc.call(node)
+      node = node.next
+    end
   end
   
   def update(key, val)
-
+    return if empty?
+    node = @head
+    until node.key == key
+      node = node.next
+    end
+    node.val = val
   end
   
   def get(key)
-
+    return nil if empty?
+    node = @head
+    until node.key == key
+      node = node.next
+    end
+    node.val
   end
   
   def remove(key)
+    node = @head
+    until node.key == key
+      node = node.next
+    end
+    node
   end
   
   def include?(key)
